@@ -23,22 +23,22 @@ hello: main.cpp printhello.cpp factorial.cpp
 #第二版本：基本功能
 实现最基本的构建与清理流程，结构清楚但冗长、缺乏扩展性。
 
-makefile
-all: main
+#makefile
+#all: main
 
-main: main.o factorial.o printhello.o
+#main: main.o factorial.o printhello.o
 	g++ -o main main.o factorial.o printhello.o
 
-main.o: main.cpp factorial.h printhello.h
+#main.o: main.cpp factorial.h printhello.h
 	g++ -c main.cpp
 
-factorial.o: factorial.cpp factorial.h
+#factorial.o: factorial.cpp factorial.h
 	g++ -c factorial.cpp
 
-printhello.o: printhello.cpp printhello.h
+#printhello.o: printhello.cpp printhello.h
 	g++ -c printhello.cpp
 
-clean:
+#clean:
 	rm -f *.o main
 #第三版本：引入变量，增强可维护性
 CXX = g++
@@ -57,15 +57,15 @@ clean:
 	rm -f *.o $(TARGET)
 
 #第四版本：自动化和目录结构优化
-CXX=g++
-TARGET=HELLO
-SRC=$(wildcard *.cpp)
-OBJ=$(patsubst %.cpp,%.o,$(SRC))
-CXXFLAGS= -c -Wall 
-$(TARGET): $(OBJ)
+#CXX=g++
+#TARGET=HELLO
+#SRC=$(wildcard *.cpp)
+#OBJ=$(patsubst %.cpp,%.o,$(SRC))
+#CXXFLAGS= -c -Wall 
+#$(TARGET): $(OBJ)
 	$(CXX) -o $@ $^
-%.o: %.cpp
+#%.o: %.cpp
 	$(CXX) $(CXXFLAGS) $< -o $@
-.PHONY: clean
-clean:
+#.PHONY: clean
+#clean:
 	rm -f *.o $(TARGET)
