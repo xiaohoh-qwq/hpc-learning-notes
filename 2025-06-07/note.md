@@ -4,13 +4,13 @@
 
 ## 1. 同步 (Synchronization)
 
-[cite_start]在共享内存模型中，多个线程会访问共享的全局数据，因此必须使用同步机制来**保护数据访问**，防止出现“竞争条件”(race conditions)，并确保线程间的执行顺序 。
+在共享内存模型中，多个线程会访问共享的全局数据，因此必须使用同步机制来**保护数据访问**，防止出现“竞争条件”(race conditions)，并确保线程间的执行顺序 。
 
 ### 1.1 Critical Section (临界区)
 
--   [cite_start]**作用**: 确保一次只有一个线程能执行特定的代码块，实现互斥 。
--   [cite_start]**指令**: `#pragma omp critical` 。
--   [cite_start]**示例**: 多个线程安全地对一个共享计数器 `count` 进行自增操作 。
+-  **作用**: 确保一次只有一个线程能执行特定的代码块，实现互斥 。
+-  **指令**: `#pragma omp critical` 。
+-  **示例**: 多个线程安全地对一个共享计数器 `count` 进行自增操作 。
     ```c
     #pragma omp parallel shared(count)
     {
@@ -21,9 +21,9 @@
 
 ### 1.2 Atomic (原子操作)
 
--   [cite_start]**作用**: 同样提供互斥，但仅限于**对单个内存位置的更新操作**，比 `critical` 更轻量级 。
--   [cite_start]**指令**: `#pragma omp atomic` 。
--   [cite_start]**示例**: 将每个线程的局部和 `lsum` 安全地累加到全局和 `sum` 中 。
+-  **作用**: 同样提供互斥，但仅限于**对单个内存位置的更新操作**，比 `critical` 更轻量级 。
+-  **指令**: `#pragma omp atomic` 。
+-  **示例**: 将每个线程的局部和 `lsum` 安全地累加到全局和 `sum` 中 。
     ```c
     #pragma omp atomic
     sum += lsum;
@@ -31,26 +31,26 @@
 
 ### 1.3 Barrier (屏障)
 
--   [cite_start]**作用**: 一个同步点。所有线程都必须到达这个点之后，才能继续执行后面的代码 。
--   [cite_start]**指令**: `#pragma omp barrier` 。
--   [cite_start]**注意**: OpenMP 的很多并行构造（如 `for`）在末尾都有一个隐含的屏障。可以使用 `nowait` 子句来移除这个隐含的屏障 。
+-  **作用**: 一个同步点。所有线程都必须到达这个点之后，才能继续执行后面的代码 。
+-  **指令**: `#pragma omp barrier` 。
+-  **注意**: OpenMP 的很多并行构造（如 `for`）在末尾都有一个隐含的屏障。可以使用 `nowait` 子句来移除这个隐含的屏障 。
 
 ---
 
 ## 2. 数据依赖 (Data Dependency)
 
-[cite_start]数据依赖是限制并行化的关键因素。在 OpenMP 中，我们尤其需要关注**循环携带的数据依赖 (loop-carried data dependency)** 。
+数据依赖是限制并行化的关键因素。在 OpenMP 中，我们尤其需要关注**循环携带的数据依赖 (loop-carried data dependency)** 。
 
 ### 2.1 指令级数据依赖
 
--   [cite_start]**流依赖 (Flow Dependency, RAW)**: 写后读，是真正的数据依赖 。
--   [cite_start]**反依赖 (Anti-dependency, WAR)**: 读后写，是伪依赖，可通过重命名变量消除 。
--   [cite_start]**输出依赖 (Output Dependency, WAW)**: 写后写，也是伪依赖，可通过重命名变量消除 。
+-  **流依赖 (Flow Dependency, RAW)**: 写后读，是真正的数据依赖 。
+-  **反依赖 (Anti-dependency, WAR)**: 读后写，是伪依赖，可通过重命名变量消除 。
+-  **输出依赖 (Output Dependency, WAW)**: 写后写，也是伪依赖，可通过重命名变量消除 。
 
 ### 2.2 循环携带的数据依赖
 
--   [cite_start]**定义**: 指的是循环中某次迭代的计算依赖于之前迭代的结果 。
--   [cite_start]**问题**: 如果存在循环携带依赖，直接用 `#pragma omp for` 进行并行化会导致错误的结果，因为无法保证迭代的执行顺序 。
+-  **定义**: 指的是循环中某次迭代的计算依赖于之前迭代的结果 。
+-  **问题**: 如果存在循环携带依赖，直接用 `#pragma omp for` 进行并行化会导致错误的结果，因为无法保证迭代的执行顺序 。
 -   **示例与解决方案**:
     -   **存在依赖的循环**:
         ```c
